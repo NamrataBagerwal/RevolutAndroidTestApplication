@@ -1,20 +1,21 @@
 package com.androidtestapp.revolut.repository.remotedatastore.webservice
 
-import com.androidtestapp.revolut.repository.remotedatastore.entity.BaseCurrencyToOtherCurrencyRates
+import com.androidtestapp.revolut.repository.remotedatastore.entity.CurrencyConversionRates
 import com.androidtestapp.revolut.repository.remotedatastore.networking.NetworkCommunication
-import com.google.gson.Gson
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.ResponseBody
 
-class CurrencyRatesWebserviceImpl : WebService<BaseCurrencyToOtherCurrencyRates> {
+class CurrencyRatesWebserviceImpl : WebService<CurrencyConversionRates> {
 
     companion object {
         private const val CURRENCY_RATES_URL =
-            "https://hiring.revolut.codes/api/android/latest?base=EUR"
+            "https://hiring.revolut.codes/api/android/latest?base="
     }
 
-    override suspend fun executeWebService(): BaseCurrencyToOtherCurrencyRates {
+    override suspend fun executeWebService(baseCurrency: String): CurrencyConversionRates {
         return NetworkCommunication
-            .getNetworkCommServiceResponse(CURRENCY_RATES_URL)
+            .getNetworkCommServiceResponse(CURRENCY_RATES_URL + baseCurrency)
             .let { response ->
                 when (val code = response.code()) {
                     in 200..299 -> parseResponse(response.body()!!)
@@ -24,8 +25,9 @@ class CurrencyRatesWebserviceImpl : WebService<BaseCurrencyToOtherCurrencyRates>
             }
     }
 
-    private fun parseResponse(responseBody: ResponseBody): BaseCurrencyToOtherCurrencyRates{
-        return Gson().fromJson(responseBody.string(), BaseCurrencyToOtherCurrencyRates::class.java)
+    private fun parseResponse(responseBody: ResponseBody): CurrencyConversionRates{
+        val mapper = jacksonObjectMapper()
+        return mapper.readValue(responseBody.string())
     }
 
 }

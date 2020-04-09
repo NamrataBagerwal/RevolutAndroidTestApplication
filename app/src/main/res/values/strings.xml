@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RevolutAndroidTestApplication</string>
+    <string name="currency_converter_title_label">Currency Converter</string>
 </resources>
