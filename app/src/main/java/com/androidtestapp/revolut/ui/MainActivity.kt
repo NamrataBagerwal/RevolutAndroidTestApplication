@@ -19,43 +19,54 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: CurrencyRateViewModel by viewModels()
 
-    private val baseCurrencyImageView: ImageView by lazy{ findViewById<ImageView>(R.id.baseCurrencyFlagImageView) }
-    private val baseCurrencyCodeTextView: TextView by lazy{ findViewById<TextView>(R.id.baseCurrencyCodeTextView) }
-    private val baseCurrencyNameTextView: TextView by lazy{ findViewById<TextView>(R.id.baseCurrencyNameTextView) }
-    private val baseCurrencyEditText: EditText by lazy{ findViewById<EditText>(R.id.baseCurrencyAmountEditText) }
+    private val baseCurrencyImageView: ImageView by lazy{ findViewById<ImageView>(R.id.currencyFlagImageView) }
+    private val baseCurrencyCodeTextView: TextView by lazy{ findViewById<TextView>(R.id.currencyCodeTextView) }
+    private val baseCurrencyNameTextView: TextView by lazy{ findViewById<TextView>(R.id.currencyNameTextView) }
+    private val baseCurrencyEditText: EditText by lazy{ findViewById<EditText>(R.id.currencyAmountEditText) }
 
     private val currencyConverterRecyclerView: RecyclerView by lazy { findViewById<RecyclerView>(R.id.currencyConverterRecyclerView) }
 
     companion object{
-        private const val DEFAULT_BASE_CURRENCY = "EUR"
+        private const val DEFAULT_BASE_CURRENCY = "GBP"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        var defaultBaseCurrencyCode = DEFAULT_BASE_CURRENCY
+
         viewModel.currencyRatesLiveData.observe(this, Observer {
             currencyConverterList ->
+
+            if(currencyConverterList.isNotEmpty()){
                 val currency: CurrencyConverter = currencyConverterList[0]
                 Glide.with(this)
                     .load(currency.currencyFlag)
                     .into(baseCurrencyImageView)
                 baseCurrencyCodeTextView.text = currency.currencyCode
                 baseCurrencyNameTextView.text = currency.currencyName
+
+                baseCurrencyEditText.isClickable = true
+                baseCurrencyEditText.setText(currency.convertedAmount.toString())
                 baseCurrencyEditText.addTextChangedListener(OnTextChangeListener{
-                    text ->  viewModel.getCurrencyRates(DEFAULT_BASE_CURRENCY, text.toDouble())
+                                        text ->  viewModel.startUpdatingCurrencyRates(defaultBaseCurrencyCode, text.toDouble())
                 })
 
                 val mutableCurrencyConverterList = currencyConverterList.let {
-                    it.toMutableList().drop(0)
+                    it.toMutableList().drop(1)
                 }
 
                 val currencyConverterAdapter = CurrencyConverterAdapter{
-                    currencyCode ->  viewModel.getCurrencyRates(currencyCode, "".toDouble())
+                        currencyCode ->
+                    run {
+                        defaultBaseCurrencyCode = currencyCode
+                        viewModel.startUpdatingCurrencyRates(currencyCode, 1.0)
+                    }
                 }
                 currencyConverterRecyclerView.adapter = currencyConverterAdapter
                 currencyConverterAdapter.currencyConverterList = mutableCurrencyConverterList
-
+            }
         })
     }
 }

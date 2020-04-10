@@ -51,6 +51,11 @@ enum class CurrencyEnum(
             return prepareCurrencyFlagUrl(currencyCode)
         }
     },
+    GBP("GBP", "British Pound Sterling"){
+        override fun getCurrencyFlag(): String {
+            return prepareCurrencyFlagUrl(currencyCode)
+        }
+    },
     HKD("HKD","Hong Kong Dollar"){
         override fun getCurrencyFlag(): String {
             return prepareCurrencyFlagUrl(currencyCode)
@@ -185,7 +190,7 @@ enum class CurrencyEnum(
     }
 
     internal fun prepareCurrencyFlagUrl(currencyCode: String): String{
-        val currencyFlag = currencyCode.subSequence(0,1).toString().toLowerCase()
+        val currencyFlag = currencyCode.subSequence(0..1).toString().toLowerCase()
         return "https://www.countryflags.io/$currencyFlag/flat/64.png"
     }
 

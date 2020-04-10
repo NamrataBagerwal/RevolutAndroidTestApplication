@@ -4,5 +4,5 @@ data class CurrencyConverter(
  var currencyFlag: String,
  var currencyCode: String,
  var currencyName: String,
- var currencyRate: Double
+ var convertedAmount: Double
 )

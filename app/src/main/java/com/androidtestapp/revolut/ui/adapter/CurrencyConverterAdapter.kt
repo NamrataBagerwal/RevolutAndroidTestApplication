@@ -1,5 +1,6 @@
 package com.androidtestapp.revolut.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,9 +35,9 @@ class CurrencyConverterAdapter(
 
     }
 
-    init {
-        setHasStableIds(true)
-    }
+//    init {
+//        setHasStableIds(true)
+//    }Mo
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyConverterViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_currency_converter_list_item, parent, false)
@@ -48,6 +49,7 @@ class CurrencyConverterAdapter(
     override fun onBindViewHolder(holder: CurrencyConverterViewHolder, position: Int) {
         val currencyConverter: CurrencyConverter = currencyConverterList[position]
 
+        Log.i(CurrencyConverterAdapter::class.simpleName, currencyConverter.currencyFlag)
         Glide.with(holder.itemView.context)
             .load(currencyConverter.currencyFlag)
             .into(holder.currencyFlag)
@@ -56,11 +58,13 @@ class CurrencyConverterAdapter(
 
         holder.currencyName.text = currencyConverter.currencyName
 
-        if(position == BASE_CURRENCY_POSITION){
-            holder.currencyAmount.isClickable = true
-            holder.currencyAmount.addTextChangedListener(OnTextChangeListener{text ->  
+        holder.currencyAmount.isClickable = false
+        holder.currencyAmount.isEnabled = false
 
-            })
+        holder.currencyAmount.setText(currencyConverter.convertedAmount.toString())
+
+        holder.itemView.setOnClickListener{
+            onCurrencyClickListener(currencyConverter.currencyCode)
         }
 
     }
