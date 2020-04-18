@@ -1,13 +1,11 @@
 package com.androidtestapp.revolut.repository.remote_repository.networking
 
-import com.androidtestapp.revolut.repository.remote_repository.networking_retrofit.RetrofitFactory
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.resumeWithException
 
 object NetworkCommunication {
 
@@ -30,16 +28,16 @@ object NetworkCommunication {
             CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
             CipherSuite.TLS_DHE_DSS_WITH_AES_128_CBC_SHA,
             CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA)
-        .build();
+        .build()
     private val httpClient by lazy {
         OkHttpClient().newBuilder()
             .addInterceptor(loggingInterceptor)
-            .connectionSpecs(Collections.singletonList(spec))
-            .retryOnConnectionFailure(true)
-            .protocols(listOf(Protocol.HTTP_1_1))
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
-            .writeTimeout(15, TimeUnit.SECONDS)
+//            .connectionSpecs(Collections.singletonList(spec))
+//            .retryOnConnectionFailure(true)
+//            .protocols(listOf(Protocol.HTTP_1_1))
+//            .connectTimeout(30, TimeUnit.SECONDS)
+//            .readTimeout(15, TimeUnit.SECONDS)
+//            .writeTimeout(15, TimeUnit.SECONDS)
             .build()
     }
 

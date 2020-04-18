@@ -13,10 +13,17 @@ import com.androidtestapp.revolut.repository.remote_repository.dto.CurrencyEnum
 import com.androidtestapp.revolut.repository.remote_repository.webservice.CurrencyRepositoryImpl
 import com.androidtestapp.revolut.repository.remote_repository.webservice.entity.CurrencyConversionRates
 import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class CurrencyRateViewModel(private val repository: Repository<CurrencyConversionRates>) : ViewModel() {
 
-    private val currentScope: CoroutineScope = viewModelScope
+    private val parentJob = Job()
+
+    private val coroutineContextDispatcherIO: CoroutineContext
+        get() = parentJob + viewModelScope.coroutineContext + Dispatchers.IO
+
+    private val coroutineContextDispatcherDefault: CoroutineContext
+        get() = parentJob + viewModelScope.coroutineContext + Dispatchers.Default
 
     private val currencyRatesLiveData: MutableLiveData<List<CurrencyConverter>> by lazy {
         MutableLiveData<List<CurrencyConverter>>().also {
@@ -39,7 +46,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
     }
 
     private fun startUpdatingCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double): Job =
-        currentScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
             //        stopUpdatingCurrencyRates()
 
             while (isActive) {
@@ -50,8 +57,11 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
         }
 
     private fun stopUpdatingCurrencyRates() {
-        if (currentScope.coroutineContext.isActive) {
-            currentScope.coroutineContext.cancelChildren()
+        if (coroutineContextDispatcherIO.isActive) {
+            coroutineContextDispatcherIO.cancelChildren()
+        }
+        if (coroutineContextDispatcherDefault.isActive) {
+            coroutineContextDispatcherDefault.cancelChildren()
         }
     }
 
@@ -76,7 +86,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
     ): List<CurrencyConverter> {
 
         val currencyConverterList: MutableList<CurrencyConverter> = mutableListOf()
-        currentScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
 
             val baseCurrencyRate: String = currencyRates.baseCurrency
             var currency: CurrencyEnum = CurrencyEnum.getCurrencyByCode(baseCurrencyRate)
@@ -104,5 +114,17 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
 
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        if (coroutineContextDispatcherIO.isActive) {
+            coroutineContextDispatcherIO.cancelChildren()
+        }
+        if (coroutineContextDispatcherDefault.isActive) {
+            coroutineContextDispatcherDefault.cancelChildren()
+        }
+        if (parentJob.isActive) {
+            parentJob.cancel()
+        }
+    }
 }
 
