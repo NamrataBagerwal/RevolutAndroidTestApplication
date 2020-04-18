@@ -16,7 +16,6 @@ import com.androidtestapp.revolut.AppConstants.DEFAULT_BASE_CURRENCY
 import com.androidtestapp.revolut.R
 import com.androidtestapp.revolut.repository.remote_repository.dto.CurrencyConverter
 import com.androidtestapp.revolut.ui.adapter.CurrencyConverterAdapter
-import com.androidtestapp.revolut.ui.util.NetworkUtility
 import com.androidtestapp.revolut.ui.util.OnTextChangeListener
 import com.androidtestapp.revolut.ui.viewmodel.CurrencyRateViewModel
 import com.bumptech.glide.Glide
