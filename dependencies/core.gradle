@@ -1,0 +1,46 @@
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    //support libraries
+    implementation "androidx.appcompat:appcompat:$DEP_VERSION.app_compat_version"
+
+    // ui libraries
+    implementation "androidx.constraintlayout:constraintlayout:$DEP_VERSION.constraint_layout_version"
+    implementation "androidx.recyclerview:recyclerview:$DEP_VERSION.recycler_view_version"
+
+    //kotlin libraries
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$VERSIONS_BUILD.KOTLIN_VERSION"
+    implementation "androidx.core:core-ktx:$DEP_VERSION.kotlin_core_version"
+
+    //Kotlin Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$DEP_VERSION.kotlin_coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$DEP_VERSION.kotlin_coroutine_version"
+
+    //Retrofit libraries
+    implementation "com.squareup.retrofit2:retrofit:$DEP_VERSION.retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-jackson:$DEP_VERSION.retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$DEP_VERSION.retrofit2_version"
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$DEP_VERSION.jackson_module_version"
+
+    //Okhttp3
+    implementation "com.squareup.okhttp3:okhttp:$DEP_VERSION.okhttp3_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$DEP_VERSION.okhttp3_version"
+
+    //Glide Libraries
+    implementation "com.github.bumptech.glide:glide:$DEP_VERSION.glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$DEP_VERSION.glide_version"
+
+    // Koin for Android
+    implementation "org.koin:koin-android:$DEP_VERSION.koin_version"
+    // Koin for view model features
+    implementation "org.koin:koin-android-viewmodel:$DEP_VERSION.koin_version"
+
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$DEP_VERSION.lifecycle_version"
+
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$DEP_VERSION.lifecycle_version"
+
+    // Activity
+    implementation "androidx.activity:activity-ktx:$DEP_VERSION.activity_lifecycle_version"
+}

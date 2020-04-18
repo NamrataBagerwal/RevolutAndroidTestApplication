@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">RevolutAndroidTestApplication</string>
-    <string name="currency_converter_title_label">Currency Converter</string>
+    <string name="app_name">Revolut Currency Converter</string>
+    <string name="network_unavailable_error_msg">Please make sure to have stable Internet Connection. Pull down to Refresh.</string>
+    <string name="server_unavailable_error_msg">Error fetching data from Server. Please try again pulling down to Refresh.</string>
 </resources>

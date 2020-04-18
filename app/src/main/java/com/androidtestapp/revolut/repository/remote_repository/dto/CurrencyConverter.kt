@@ -1,4 +1,4 @@
-package com.androidtestapp.revolut.repository.remotedatastore.dto
+package com.androidtestapp.revolut.repository.remote_repository.dto
 
 data class CurrencyConverter(
  var currencyFlag: String,

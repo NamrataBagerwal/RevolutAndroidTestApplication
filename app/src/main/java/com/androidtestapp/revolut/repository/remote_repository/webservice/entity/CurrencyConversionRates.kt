@@ -1,4 +1,4 @@
-package com.androidtestapp.revolut.repository.remotedatastore.entity
+package com.androidtestapp.revolut.repository.remote_repository.webservice.entity
 
 data class CurrencyConversionRates(
     val baseCurrency: String,

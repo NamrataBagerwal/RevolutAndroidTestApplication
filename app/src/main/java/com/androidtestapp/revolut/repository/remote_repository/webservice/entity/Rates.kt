@@ -1,4 +1,4 @@
-package com.androidtestapp.revolut.repository.remotedatastore.entity
+package com.androidtestapp.revolut.repository.remote_repository.webservice.entity
 
 
 import com.fasterxml.jackson.annotation.JsonProperty

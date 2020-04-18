@@ -1,50 +1,73 @@
 package com.androidtestapp.revolut.ui.viewmodel
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.androidtestapp.revolut.AppConstants.DEFAULT_BASE_CURRENCY
+import com.androidtestapp.revolut.AppConstants.DEFAULT_BASE_CURRENCY_AMOUNT
 import com.androidtestapp.revolut.repository.Repository
-import com.androidtestapp.revolut.repository.remotedatastore.RemoteRepositoryImpl
-import com.androidtestapp.revolut.repository.remotedatastore.dto.CurrencyConverter
-import com.androidtestapp.revolut.repository.remotedatastore.dto.CurrencyEnum
-import com.androidtestapp.revolut.repository.remotedatastore.entity.CurrencyConversionRates
+import com.androidtestapp.revolut.repository.remote_repository.RemoteRepositoryImpl
+import com.androidtestapp.revolut.repository.remote_repository.dto.CurrencyConverter
+import com.androidtestapp.revolut.repository.remote_repository.dto.CurrencyEnum
+import com.androidtestapp.revolut.repository.remote_repository.webservice.CurrencyRepositoryImpl
+import com.androidtestapp.revolut.repository.remote_repository.webservice.entity.CurrencyConversionRates
 import kotlinx.coroutines.*
 
-class CurrencyRateViewModel() : ViewModel() {
+class CurrencyRateViewModel(private val repository: Repository<CurrencyConversionRates>) : ViewModel() {
 
     private val currentScope: CoroutineScope = viewModelScope
 
-    val repository: Repository<CurrencyConversionRates> = RemoteRepositoryImpl()
-
-    val currencyRatesLiveData: MutableLiveData<List<CurrencyConverter>> = MutableLiveData()
-
-    init {
-        startUpdatingCurrencyRates("GBP", 1.0)
-    }
-
-    fun startUpdatingCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double): Job = currentScope.launch(Dispatchers.IO) {
-//        stopUpdatingCurrencyRates()
-
-        while (isActive) {
-            updateCurrencyRatesEverySecond(baseCurrency, baseCurrencyAmount)
-            delay(1000)
+    private val currencyRatesLiveData: MutableLiveData<List<CurrencyConverter>> by lazy {
+        MutableLiveData<List<CurrencyConverter>>().also {
+            startUpdatingCurrencyRates(DEFAULT_BASE_CURRENCY, DEFAULT_BASE_CURRENCY_AMOUNT)
         }
     }
 
-    private fun stopUpdatingCurrencyRates() {
-//        if(currentScope.coroutineContext[Job] == Dispatchers.IO && currentScope.coroutineContext[Job]?.isActive == true) {
-            currentScope.coroutineContext.cancelChildren()
-//        }
+    fun getCurrencyRates(): LiveData<List<CurrencyConverter>>{
+        return currencyRatesLiveData
     }
 
-    private suspend fun updateCurrencyRatesEverySecond(baseCurrency: String, baseCurrencyAmount: Double) {
-        val currencyRates: CurrencyConversionRates = repository.invokeWebService(baseCurrency)
-        Log.i("getCurrencyRates", "getCurrencyRates called")
-        currencyRatesLiveData.postValue(
-            convertResponseToCurrencyConverter(currencyRates, baseCurrencyAmount)
-        )
+//    init {
+//        startUpdatingCurrencyRates("GBP", 1.0)
+//    }
 
+    fun updateCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double) {
+        stopUpdatingCurrencyRates()
+        startUpdatingCurrencyRates(baseCurrency, baseCurrencyAmount)
+
+    }
+
+    private fun startUpdatingCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double): Job =
+        currentScope.launch(Dispatchers.IO) {
+            //        stopUpdatingCurrencyRates()
+
+            while (isActive) {
+                updateCurrencyRatesEverySecond(baseCurrency, baseCurrencyAmount)
+                delay(1000)
+            }
+
+        }
+
+    private fun stopUpdatingCurrencyRates() {
+        if (currentScope.coroutineContext.isActive) {
+            currentScope.coroutineContext.cancelChildren()
+        }
+    }
+
+    private suspend fun updateCurrencyRatesEverySecond(
+        baseCurrency: String,
+        baseCurrencyAmount: Double
+    ) {
+        val currencyRates: CurrencyConversionRates? =
+            repository.invokeWebService(baseCurrency)
+        if (currencyRates != null) {
+            val currencyConverterList =
+                convertResponseToCurrencyConverter(currencyRates, baseCurrencyAmount)
+            currencyRatesLiveData.postValue(
+                currencyConverterList
+            )
+        }
     }
 
     private fun convertResponseToCurrencyConverter(
@@ -80,5 +103,6 @@ class CurrencyRateViewModel() : ViewModel() {
         return currencyConverterList
 
     }
+
 }
 
