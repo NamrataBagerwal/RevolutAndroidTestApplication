@@ -1,5 +1,6 @@
 package com.androidtestapp.revolut.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,23 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.androidtestapp.revolut.AppConstants.DEFAULT_BASE_CURRENCY
 import com.androidtestapp.revolut.AppConstants.DEFAULT_BASE_CURRENCY_AMOUNT
 import com.androidtestapp.revolut.repository.Repository
-import com.androidtestapp.revolut.repository.remote_repository.RemoteRepositoryImpl
 import com.androidtestapp.revolut.repository.remote_repository.dto.CurrencyConverter
 import com.androidtestapp.revolut.repository.remote_repository.dto.CurrencyEnum
-import com.androidtestapp.revolut.repository.remote_repository.webservice.CurrencyRepositoryImpl
 import com.androidtestapp.revolut.repository.remote_repository.webservice.entity.CurrencyConversionRates
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class CurrencyRateViewModel(private val repository: Repository<CurrencyConversionRates>) : ViewModel() {
 
-    private val parentJob = Job()
+    private val parentJob = SupervisorJob()
 
     private val coroutineContextDispatcherIO: CoroutineContext
         get() = parentJob + viewModelScope.coroutineContext + Dispatchers.IO
 
     private val coroutineContextDispatcherDefault: CoroutineContext
         get() = parentJob + viewModelScope.coroutineContext + Dispatchers.Default
+
+    private val coroutineContextDedicatedThread: CoroutineContext
+        get() = newSingleThreadContext("CurrencyApiCall")
 
     private val currencyRatesLiveData: MutableLiveData<List<CurrencyConverter>> by lazy {
         MutableLiveData<List<CurrencyConverter>>().also {
@@ -35,33 +37,31 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
         return currencyRatesLiveData
     }
 
-//    init {
-//        startUpdatingCurrencyRates("GBP", 1.0)
-//    }
-
     fun updateCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double) {
-        stopUpdatingCurrencyRates()
+//        stopUpdatingCurrencyRates()
         startUpdatingCurrencyRates(baseCurrency, baseCurrencyAmount)
 
     }
 
     private fun startUpdatingCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double): Job =
-        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
-            //        stopUpdatingCurrencyRates()
-
+        viewModelScope.launch(context = coroutineContextDedicatedThread) {
             while (isActive) {
                 updateCurrencyRatesEverySecond(baseCurrency, baseCurrencyAmount)
-                delay(1000)
+                Thread.sleep(1000)
             }
 
         }
 
     private fun stopUpdatingCurrencyRates() {
-        if (coroutineContextDispatcherIO.isActive) {
-            coroutineContextDispatcherIO.cancelChildren()
-        }
-        if (coroutineContextDispatcherDefault.isActive) {
-            coroutineContextDispatcherDefault.cancelChildren()
+//        if (coroutineContextDispatcherIO.isActive) {
+//            coroutineContextDispatcherIO.cancelChildren()
+//        }
+//        if (coroutineContextDispatcherDefault.isActive) {
+//            coroutineContextDispatcherDefault.cancelChildren()
+//        }
+
+        if(coroutineContextDedicatedThread.isActive){
+            coroutineContextDedicatedThread.cancelChildren()
         }
     }
 
@@ -69,8 +69,8 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
         baseCurrency: String,
         baseCurrencyAmount: Double
     ) {
-        val currencyRates: CurrencyConversionRates? =
-            repository.invokeWebService(baseCurrency)
+        Log.d("TAG", "  updateCurrencyRatesEverySecond")
+        val currencyRates: CurrencyConversionRates? = repository.invokeWebService(baseCurrency)
         if (currencyRates != null) {
             val currencyConverterList =
                 convertResponseToCurrencyConverter(currencyRates, baseCurrencyAmount)
@@ -86,7 +86,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
     ): List<CurrencyConverter> {
 
         val currencyConverterList: MutableList<CurrencyConverter> = mutableListOf()
-        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
+//        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
 
             val baseCurrencyRate: String = currencyRates.baseCurrency
             var currency: CurrencyEnum = CurrencyEnum.getCurrencyByCode(baseCurrencyRate)
@@ -109,19 +109,22 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
                 )
                 currencyConverterList.add(currencyConverter)
             }
-        }
+//        }
         return currencyConverterList
 
     }
 
     override fun onCleared() {
         super.onCleared()
-        if (coroutineContextDispatcherIO.isActive) {
-            coroutineContextDispatcherIO.cancelChildren()
-        }
-        if (coroutineContextDispatcherDefault.isActive) {
-            coroutineContextDispatcherDefault.cancelChildren()
-        }
+//        if (coroutineContextDispatcherIO.isActive) {
+//            coroutineContextDispatcherIO.cancelChildren()
+//        }
+//        if (coroutineContextDispatcherDefault.isActive) {
+//            coroutineContextDispatcherDefault.cancelChildren()
+//        }
+
+        stopUpdatingCurrencyRates()
+
         if (parentJob.isActive) {
             parentJob.cancel()
         }

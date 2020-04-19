@@ -5,7 +5,9 @@ dependencies{
     testImplementation "org.mockito:mockito-inline:$DEP_VERSION.mockito_version"
     testImplementation "androidx.test.ext:junit:$DEP_VERSION.junit_ext_version"
     testImplementation "androidx.test:core-ktx:$DEP_VERSION.test_core_ext_version"
-    // Koin for Unit tests
+    testImplementation "androidx.arch.core:core-testing:$DEP_VERSION.architecture_core_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$DEP_VERSION.kotlin_coroutines_test_version"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$DEP_VERSION.nhaarman_mockito_kotlin_version"
     testImplementation "org.koin:koin-test:$DEP_VERSION.koin_version"
 
     androidTestImplementation "androidx.test.ext:junit:$DEP_VERSION.junit_ext_version"

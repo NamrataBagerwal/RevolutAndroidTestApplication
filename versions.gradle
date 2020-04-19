@@ -35,4 +35,7 @@ DEP_VERSION.espresso_core_version = "3.2.0"
 DEP_VERSION.test_core_ext_version = "1.2.0"
 DEP_VERSION.lifecycle_version = "2.2.0"
 DEP_VERSION.activity_lifecycle_version = "1.1.0"
+DEP_VERSION.architecture_core_version = "2.1.0"
+DEP_VERSION.kotlin_coroutines_test_version = "1.3.5"
+DEP_VERSION.nhaarman_mockito_kotlin_version = "2.2.0"
 ext.DEP_VERSION = DEP_VERSION
