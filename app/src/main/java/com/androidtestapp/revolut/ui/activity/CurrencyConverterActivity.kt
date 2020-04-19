@@ -57,21 +57,21 @@ class CurrencyConverterActivity : AppCompatActivity() {
     private fun subscribeCurrencyUpdates() {
 
 //        if(NetworkUtility.isNetworkAvailable(this@CurrencyConverterActivity) != null){
-            viewModel.getCurrencyRates().observe(
-                this@CurrencyConverterActivity,
-                Observer { currencyConverterList ->
+        viewModel.getCurrencyRates().observe(
+            this@CurrencyConverterActivity,
+            Observer { currencyConverterList ->
 
-                    if (!currencyConverterList.isNullOrEmpty()) {
-                        showCurrencyList()
+                if (!currencyConverterList.isNullOrEmpty()) {
+                    showCurrencyList()
 
-                        updateBaseCurrencyUI(currencyConverterList)
+                    updateBaseCurrencyUI(currencyConverterList)
 
-                        registerTextChangeListener(defaultBaseCurrencyCode)
+                    registerTextChangeListener(defaultBaseCurrencyCode)
 
-                        setCurrencyList(currencyConverterList)
+                    setCurrencyList(currencyConverterList)
 
-                    }
-                })
+                }
+            })
 //        }
     }
 
@@ -110,21 +110,19 @@ class CurrencyConverterActivity : AppCompatActivity() {
 
     private fun updateBaseCurrencyUI(currencyConverterList: List<CurrencyConverter>) {
         val currency = currencyConverterList[BASE_CURRENCY_POSITION]
-//        if (defaultBaseCurrencyCode == currency.currencyCode) {
-            Glide.with(this@CurrencyConverterActivity)
-                .load(currency.currencyFlag)
-                .into(baseCurrencyImageView)
-            baseCurrencyCodeTextView.text = currency.currencyCode
-            baseCurrencyNameTextView.text = currency.currencyName
+        Glide.with(this@CurrencyConverterActivity)
+            .load(currency.currencyFlag)
+            .into(baseCurrencyImageView)
+        baseCurrencyCodeTextView.text = currency.currencyCode
+        baseCurrencyNameTextView.text = currency.currencyName
 
-            if (currency.convertedAmount == CURRENCY_AMOUNT_ZERO) {
-                baseCurrencyEditText.hint = CURRENCY_AMOUNT_ZERO.toString()
-            } else {
-                baseCurrencyEditText.setText(currency.convertedAmount.toString())
-                baseCurrencyEditText.setSelection(currency.convertedAmount.toString().length)
-            }
+        if (currency.convertedAmount == CURRENCY_AMOUNT_ZERO) {
+            baseCurrencyEditText.hint = CURRENCY_AMOUNT_ZERO.toString()
+        } else {
+            baseCurrencyEditText.setText(currency.convertedAmount.toString())
+            baseCurrencyEditText.setSelection(currency.convertedAmount.toString().length)
+        }
 
-//        }
 
     }
 

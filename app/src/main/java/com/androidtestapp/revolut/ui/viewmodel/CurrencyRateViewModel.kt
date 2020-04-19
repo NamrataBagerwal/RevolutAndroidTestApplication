@@ -37,7 +37,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
     }
 
     fun updateCurrencyRates(baseCurrency: String, baseCurrencyAmount: Double) {
-//        stopUpdatingCurrencyRates()
+        stopUpdatingCurrencyRates()
         startUpdatingCurrencyRates(baseCurrency, baseCurrencyAmount)
 
     }
@@ -55,12 +55,13 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
 //        if (coroutineContextDispatcherIO.isActive) {
 //            coroutineContextDispatcherIO.cancelChildren()
 //        }
-//        if (coroutineContextDispatcherDefault.isActive) {
-//            coroutineContextDispatcherDefault.cancelChildren()
-//        }
+        if (coroutineContextDispatcherDefault.isActive) {
+            coroutineContextDispatcherDefault.cancelChildren()
+        }
 
         if(coroutineContextDedicatedThread.isActive){
             coroutineContextDedicatedThread.cancelChildren()
+//            coroutineContextDedicatedThread.cancel()
         }
     }
 
@@ -85,7 +86,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
     ): List<CurrencyConverter> {
 
         val currencyConverterList: MutableList<CurrencyConverter> = mutableListOf()
-//        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
+        viewModelScope.launch(context = coroutineContextDispatcherDefault) {
 
             val baseCurrencyRate: String = currencyRates.baseCurrency
             var currency: CurrencyEnum = CurrencyEnum.getCurrencyByCode(baseCurrencyRate)
@@ -108,7 +109,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
                 )
                 currencyConverterList.add(currencyConverter)
             }
-//        }
+        }
         return currencyConverterList
 
     }
