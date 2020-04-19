@@ -24,8 +24,7 @@ class CurrencyRateViewModel(private val repository: Repository<CurrencyConversio
     private val coroutineContextDispatcherDefault: CoroutineContext
         get() = parentJob + viewModelScope.coroutineContext + Dispatchers.Default
 
-    private val coroutineContextDedicatedThread: CoroutineContext
-        get() = newSingleThreadContext("CurrencyApiCall")
+    private val coroutineContextDedicatedThread = newSingleThreadContext("CurrencyApiCall")
 
     private val currencyRatesLiveData: MutableLiveData<List<CurrencyConverter>> by lazy {
         MutableLiveData<List<CurrencyConverter>>().also {
