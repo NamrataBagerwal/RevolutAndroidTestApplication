@@ -40,7 +40,10 @@ class CurrencyConverterActivity : AppCompatActivity() {
 
     private val baseCurrencyView: View by lazy { findViewById<View>(R.id.includeLayout) }
 
+    private lateinit var currencyConverterAdapter: CurrencyConverterAdapter
+
     private var defaultBaseCurrencyCode = DEFAULT_BASE_CURRENCY
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,6 +53,10 @@ class CurrencyConverterActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             showProgressBar()
         }
+
+        registerTextChangeListener()
+
+        setRecyclerViewAdapter()
 
         subscribeCurrencyUpdates()
     }
@@ -66,8 +73,6 @@ class CurrencyConverterActivity : AppCompatActivity() {
 
                     updateBaseCurrencyUI(currencyConverterList)
 
-                    registerTextChangeListener(defaultBaseCurrencyCode)
-
                     setCurrencyList(currencyConverterList)
 
                 }
@@ -80,7 +85,12 @@ class CurrencyConverterActivity : AppCompatActivity() {
             it.toMutableList().drop(1)
         }
 
-        val currencyConverterAdapter = CurrencyConverterAdapter(
+        currencyConverterAdapter.currencyConverterList = mutableCurrencyConverterList
+
+    }
+
+    private fun setRecyclerViewAdapter() {
+        currencyConverterAdapter = CurrencyConverterAdapter(
             onCurrencyClickListener = { currencyCode, currencyAmount ->
                 defaultBaseCurrencyCode = currencyCode
                 viewModel.updateCurrencyRates(currencyCode, currencyAmount)
@@ -94,11 +104,10 @@ class CurrencyConverterActivity : AppCompatActivity() {
         // To maintain scroll state of recyclerview when adapter data is notified
         val recyclerViewState = currencyConverterRecyclerView.layoutManager?.onSaveInstanceState()
         currencyConverterRecyclerView.adapter = currencyConverterAdapter
-        currencyConverterAdapter.currencyConverterList = mutableCurrencyConverterList
         currencyConverterRecyclerView.layoutManager?.onRestoreInstanceState(recyclerViewState)
     }
 
-    private fun registerTextChangeListener(defaultBaseCurrencyCode: String) {
+    private fun registerTextChangeListener() {
         baseCurrencyEditText.addTextChangedListener(OnTextChangeListener { text ->
             var currencyAmount = CURRENCY_AMOUNT_ZERO
             if (!text.isNullOrBlank()) {
