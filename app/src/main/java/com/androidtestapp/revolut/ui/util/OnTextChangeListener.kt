@@ -2,6 +2,7 @@ package com.androidtestapp.revolut.ui.util
 
 import android.text.Editable
 import android.text.TextWatcher
+import com.androidtestapp.revolut.AppConstants.EDIT_TEXT_CHANGE_LISTENER_DELAY
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -9,22 +10,19 @@ class OnTextChangeListener(val onTextChanged: (text: String) -> Unit) : TextWatc
     var timer = Timer()
 
     override fun afterTextChanged(s: Editable?) {
+        // No Implementation Required
     }
 
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        // No Implementation Required
     }
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
         timer.cancel()
-        val sleep = when (s?.length) {
-            1 -> 1000L
-            2, 3 -> 700L
-            4, 5 -> 500L
-            else -> 200L
-        }
         timer = Timer()
-        timer.schedule(sleep) {
+        timer.schedule(EDIT_TEXT_CHANGE_LISTENER_DELAY) {
             onTextChanged(s.toString())
         }
+        onTextChanged(s.toString())
     }
 }

@@ -1,12 +1,12 @@
 package com.androidtestapp.revolut.repository.remote_repository
 
 import com.androidtestapp.revolut.repository.Repository
+import com.androidtestapp.revolut.repository.remote_repository.webservice.WebService
 import com.androidtestapp.revolut.repository.remote_repository.webservice.entity.CurrencyConversionRates
-import com.androidtestapp.revolut.repository.remote_repository.webservice.CurrencyRatesWebserviceImpl
 
-class RemoteRepositoryImpl: Repository<CurrencyConversionRates> {
+class RemoteRepositoryImpl(private val currencyRatesWebserviceImpl: WebService<CurrencyConversionRates>): Repository<CurrencyConversionRates> {
 
     override suspend fun invokeWebService(baseCurrency: String): CurrencyConversionRates?{
-        return CurrencyRatesWebserviceImpl().executeWebService(baseCurrency)
+        return currencyRatesWebserviceImpl.executeWebService(baseCurrency)
     }
 }

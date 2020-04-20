@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.CurrencyConversionActivity"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/contentLoadingProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:max="@android:integer/config_mediumAnimTime"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/errorTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/network_unavailable_error_msg"
+        android:fontFamily="sans-serif-medium"
+        android:layout_gravity="center_horizontal|center_vertical|center"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textStyle="normal|bold"
+        android:visibility="gone"/>
+
+    <include
+        android:id="@+id/includeLayout"
+        layout="@layout/adapter_currency_converter_list_item"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/currencyConverterRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:visibility="gone"/>
+
+</LinearLayout>

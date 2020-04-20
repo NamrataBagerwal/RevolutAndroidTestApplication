@@ -11,6 +11,7 @@ class CurrencyRatesApplication: Application() {
         // get list of all modules
         val diModuleList = listOf(
             DependencyInjectionModule.repositoryModule,
+            DependencyInjectionModule.webserviceModule,
             DependencyInjectionModule.viewModelModule
         )
         // start koin with the module list

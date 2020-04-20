@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.ResponseBody
 
-class CurrencyRatesWebserviceImpl : WebService<CurrencyConversionRates> {
+class CurrencyRatesWebserviceImpl() : WebService<CurrencyConversionRates> {
 
     companion object {
         private const val CURRENCY_RATES_URL =
@@ -25,7 +25,6 @@ class CurrencyRatesWebserviceImpl : WebService<CurrencyConversionRates> {
                 }
 
             }
-        return null
     }
 
     private fun parseResponse(responseBody: ResponseBody): CurrencyConversionRates?{
